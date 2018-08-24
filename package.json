@@ -1,0 +1,30 @@
+{
+  "name": "graphiql-proxy",
+  "version": "0.1.0",
+  "dependencies": {
+    "graphiql": "^0.11.11",
+    "graphql": "^0.13.2",
+    "isomorphic-fetch": "^2.2.1",
+    "prettier-eslint": "^8.8.1",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-scripts": "1.1.5"
+  },
+  "proxy": {
+    "/graphql": {
+      "target": "http://localhost:3003"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "lint"
+    ]
+  },
+  "scripts": {
+    "postinstall": "npm install --prefix ./server",
+    "start:server": "PROXY_HOST=https://fakerql.com/ npm start --prefix ./server",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom"
+  }
+}
