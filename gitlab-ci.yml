@@ -1,0 +1,81 @@
+# .gitlab-ci.yml
+# Author: Robert Van Voorhees <robert_van_voorhees@troweprice.com>
+# Description: This is a basic GitLab Runner CI file for building and testing a basic Create React App frontend.
+variables:
+  CI: 'true'
+
+stages:
+  - build
+  - test
+  - package
+  - test-ui
+  - sonar
+  - deploy
+
+# Run the build first, to make sure that all minification and uglification properly executes.
+build:
+  image: node:8
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  cache:
+    key: '$CI_COMMIT_REF_SLUG'
+    paths:
+      - node_modules
+  artifacts:
+    name: '$CI_COMMIT_REF_NAME'
+    paths:
+      - build/
+  only:
+    - branches
+
+test:
+  image: node:8
+  stage: test
+  script:
+    - npm install
+    - npm run test -- --coverage --testResultsProcessor="jest-junit"
+  cache:
+    key: '$CI_COMMIT_REF_SLUG'
+    paths:
+      - node_modules
+  artifacts:
+    reports:
+      junit: junit.xml
+  only:
+    - branches
+
+package:
+  image: docker:latest
+  stage: package
+  services:
+    - docker:dind
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - ls -la
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  dependencies:
+    - build
+  only:
+    - branches
+
+test-ui:
+  image:
+    name: docker/compose:1.21.2
+    entrypoint: ['/bin/sh', '-c']
+  stage: test-ui
+  cache:
+    key: '$CI_COMMIT_REF_SLUG'
+    paths:
+      - node_modules
+  services:
+    - docker:dind
+  artifacts:
+    reports:
+      junit: ./testOutput/e2e-junit.xml
+  dependencies:
+    - package
+  script:
+    - ./scripts/run-e2e.sh

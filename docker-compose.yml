@@ -1,0 +1,30 @@
+version: "3"
+services:
+  ui:
+    environment:
+      PROXY_HOST: https://api.graph.cool/simple/v1/swapi
+    image: "${CI_REGISTRY_IMAGE:-ui}:${CI_COMMIT_REF_SLUG:-latest}"
+    build: .
+    networks:
+      - compose
+  webdriver:
+    image: selenium/standalone-chrome
+    shm_size: 2g
+    networks:
+      - compose
+  tests:
+    environment:
+      BASE_URL: http://ui:3003
+      SELENIUM_ADDRESS: http://webdriver:4444/wd/hub
+    image: node:8
+    working_dir: "${CI_PROJECT_DIR:-/working/}"
+    command: cat
+    volumes:
+      - "${CI_PROJECT_DIR:-.}:${CI_PROJECT_DIR:-/working/}:Z"
+    depends_on:
+      - webdriver
+      - ui
+    networks:
+      - compose
+networks:
+  compose:
