@@ -35,7 +35,7 @@ test:
   stage: test
   script:
     - npm install
-    - npm run test -- --coverage --testResultsProcessor="jest-junit"
+    - npm run test -- --ci --coverage --reporters=default --reporters=jest-junit
   cache:
     key: '$CI_COMMIT_REF_SLUG'
     paths:
