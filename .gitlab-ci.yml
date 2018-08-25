@@ -90,7 +90,7 @@ test-ui:
     - docker-compose version
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
     - mkdir -p ${SHARED_PATH}
-    - git clone .git ${SHARED_PATH}
+    - cp -R . ${SHARED_PATH}
     - cd ${SHARED_PATH}
     - docker-compose rm -f
     - docker-compose up --timeout 1 --no-build -d
