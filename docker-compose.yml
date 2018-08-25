@@ -8,7 +8,7 @@ services:
     networks:
       - compose
   webdriver:
-    image: selenium/standalone-chrome
+    image: voor/chromedriver-headless
     shm_size: 2g
     networks:
       - compose
@@ -16,6 +16,7 @@ services:
     environment:
       BASE_URL: http://ui:3003
       SELENIUM_ADDRESS: http://webdriver:4444/wd/hub
+      CI: "true"
     image: node:8
     working_dir: "${SHARED_PATH:-/working/}"
     command: cat
