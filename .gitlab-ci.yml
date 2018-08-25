@@ -81,15 +81,11 @@ test-ui:
     - chmod +x /usr/local/bin/docker-compose
     - pip install docker-compose
   script:
-    - ls -la
     - docker version
     - docker-compose version
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
-    - echo ${SHARED_PATH}
     - mkdir -p ${SHARED_PATH}
-    - cp -R node_modules wdio.conf.js .babelrc package*.json scripts e2e ${SHARED_PATH}
-    - docker run --rm -v ${SHARED_PATH}:${SHARED_PATH} node:8 find ${SHARED_PATH}
-    - docker run --rm -v ${SHARED_PATH}:${SHARED_PATH} node:8 ls -la ${SHARED_PATH}
+    - git clone --depth 1 .git ${SHARED_PATH}
     - cd ${SHARED_PATH} && ./scripts/run-e2e.sh
   only:
     - branches
