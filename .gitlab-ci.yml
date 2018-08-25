@@ -64,7 +64,7 @@ package:
 test-ui:
   image: 
     name: docker/compose:1.22.0
-    entrypoint: /bin/sh
+    entrypoint: ["/bin/sh", "-c"]
   stage: test-ui
   cache:
     key: '$CI_COMMIT_REF_SLUG'
