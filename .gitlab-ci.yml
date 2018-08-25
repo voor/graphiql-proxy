@@ -62,8 +62,7 @@ package:
     - branches
 
 test-ui:
-  image:
-    name: docker:latest
+  image: docker:latest
   stage: test-ui
   cache:
     key: '$CI_COMMIT_REF_SLUG'
@@ -76,16 +75,21 @@ test-ui:
       junit: ./shared/testOutput/e2e-junit.xml
   dependencies:
     - package
+  before_script:
+    - apk --no-cache add python python-dev py-pip build-base curl
+    - curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+    - chmod +x /usr/local/bin/docker-compose
+    - pip install docker-compose
   script:
     - ls -la
     - docker version
-    - curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-    - chmod +x /usr/local/bin/docker-compose
     - docker-compose version
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
     - echo ${SHARED_PATH}
     - mkdir -p ${SHARED_PATH}
-    - cp -R wdio.conf.js .babelrc package*.json scripts e2e ${SHARED_PATH}
+    - cp -R node_modules wdio.conf.js .babelrc package*.json scripts e2e ${SHARED_PATH}
     - docker run --rm -v ${SHARED_PATH}:${SHARED_PATH} node:8 find ${SHARED_PATH}
     - docker run --rm -v ${SHARED_PATH}:${SHARED_PATH} node:8 ls -la ${SHARED_PATH}
     - cd ${SHARED_PATH} && ./scripts/run-e2e.sh
+  only:
+    - branches
