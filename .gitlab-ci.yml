@@ -74,8 +74,16 @@ test-ui:
     - docker:dind
   artifacts:
     reports:
-      junit: ./testOutput/e2e-junit.xml
+      junit: ./shared/testOutput/e2e-junit.xml
   dependencies:
     - package
   script:
-    - ./scripts/run-e2e.sh
+    - ls -la
+    - docker version
+    - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
+    - echo ${SHARED_PATH}
+    - mkdir -p ${SHARED_PATH}
+    - cp -R wdio.conf.js .babelrc package*.json scripts e2e ${SHARED_PATH}
+    - docker run --rm -v ${SHARED_PATH}:${SHARED_PATH} node:8 find ${SHARED_PATH}
+    - docker run --rm -v ${SHARED_PATH}:${SHARED_PATH} node:8 ls -la ${SHARED_PATH}
+    - cd ${SHARED_PATH} && ./scripts/run-e2e.sh

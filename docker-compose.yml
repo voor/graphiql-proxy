@@ -17,10 +17,10 @@ services:
       BASE_URL: http://ui:3003
       SELENIUM_ADDRESS: http://webdriver:4444/wd/hub
     image: node:8
-    working_dir: "${CI_PROJECT_DIR:-/working/}"
+    working_dir: "${SHARED_PATH:-/working/}"
     command: cat
     volumes:
-      - "${CI_PROJECT_DIR:-.}:${CI_PROJECT_DIR:-/working/}:Z"
+      - "${SHARED_PATH:-.}:${SHARED_PATH:-/working/}:Z"
     depends_on:
       - webdriver
       - ui
