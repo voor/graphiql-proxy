@@ -18,7 +18,7 @@ build:
   stage: build
   script:
     - npm install
-    - CI='' npm run build
+    - CI='' npm run build # CI variable is blanked out due to stupid dependency WARNING that CRA treats as an error in CI
   cache:
     key: '$CI_COMMIT_REF_SLUG'
     paths:
@@ -62,6 +62,9 @@ package:
     - branches
 
 test-ui:
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
   image: 
     name: docker/compose:1.22.0
     entrypoint: ["/bin/sh", "-c"]
