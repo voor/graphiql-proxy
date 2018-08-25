@@ -5,7 +5,7 @@ const seleniumAddress = new URL(process.env.SELENIUM_ADDRESS || 'http://127.0.0.
 const host = seleniumAddress.hostname;
 const port = seleniumAddress.port;
 const path = seleniumAddress.pathname;
-const { FIREFOX, CHROME, CI } = process.env;
+const { FIREFOX, CHROME, CI, CHROMEOPTIONS_ARGS } = process.env;
 
 const capabilities = [];
 
@@ -16,8 +16,27 @@ if (FIREFOX) {
 }
 
 if (CHROME || !capabilities.length) {
+  const args = CHROMEOPTIONS_ARGS ? CHROMEOPTIONS_ARGS.split(' ') : [];
+
+  if (!args.length && CI) {
+    // Add some sane defaults for a CI environment.
+    args.push(
+      'disable-infobars',
+      'start-maximized',
+      '--headless',
+      '--disable-gpu',
+      '--disable-extensions',
+      '--disable-software-rasterizer',
+      '--no-sandbox',
+      '--disable-dev-shm-usage'
+    );
+  }
+
   capabilities.push({
     browserName: 'chrome',
+    chromeOptions: {
+      args,
+    },
   });
 }
 
