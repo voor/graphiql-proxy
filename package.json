@@ -40,7 +40,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "test:ui": "wdio"
+    "wdio": "wdio"
   },
   "devDependencies": {
     "jest-fetch-mock": "^1.6.5"

@@ -1,11 +1,13 @@
 const { URL } = require('url');
+const path = require('path');
 
 const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:3003';
 const seleniumAddress = new URL(process.env.SELENIUM_ADDRESS || 'http://127.0.0.1:4444/wd/hub');
 const host = seleniumAddress.hostname;
 const port = seleniumAddress.port;
-const path = seleniumAddress.pathname;
-const { FIREFOX, CHROME, CI, CHROMEOPTIONS_ARGS } = process.env;
+const pathname = seleniumAddress.pathname;
+const { FIREFOX, CHROME, CI, CHROMEOPTIONS_ARGS, PWD } = process.env;
+const outputDir = path.resolve(PWD, 'junit');
 
 const capabilities = [];
 
@@ -39,8 +41,6 @@ if (CHROME || !capabilities.length) {
     },
   });
 }
-
-console.log(`Connecting to ${seleniumAddress} divided into parts: host: ${host}, port ${port}, path ${path}`);
 
 exports.config = {
   //
@@ -117,7 +117,7 @@ exports.config = {
   // Selenium location.
   host,
   port,
-  path,
+  path: pathname,
   //
   // Default timeout for all waitFor* commands.
   waitforTimeout: 10000,
@@ -176,14 +176,7 @@ exports.config = {
   reporters: ['junit', 'spec'],
   reporterOptions: {
     junit: {
-      outputDir: './testOutput',
-      outputFileFormat: function(opts) {
-        if (CI) {
-          return 'e2e-junit.xml';
-        } else {
-          return `results-${opts.cid}.${opts.capabilities}.xml`;
-        }
-      },
+      outputDir,
     },
   },
   //

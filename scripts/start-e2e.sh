@@ -14,4 +14,4 @@ echo -n "Making sure dependencies are present ..."
 npm install --quiet --no-color >/dev/null 2>&1
 echo " done"
 echo "Beginning tests..."
-npm run test:ui
+npm run wdio

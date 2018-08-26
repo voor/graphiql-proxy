@@ -3,9 +3,6 @@
 # Description: This is a GitLab Runner CI file for building and testing a Create React App frontend.
 # For testing this locally, there's a ./scripts/run-e2e.sh file.
 # You'll also need to incorporate the server folder or identify an alternative static hosting source.
-variables:
-  CI: 'true'
-
 stages:
   - build
   - test
@@ -41,6 +38,7 @@ test:
   artifacts:
     reports:
       junit: junit.xml
+  coverage: ^All files\s*\|\s*\d+\.*\d+\s*\|\s*(\d+\.*\d+)
 
 package:
   image: docker:latest
@@ -71,7 +69,7 @@ test-ui:
     - docker:dind
   artifacts:
     reports:
-      junit: "**/*-junit.xml"
+      junit: '**/*-junit.xml'
   dependencies:
     - package
   script:
@@ -79,8 +77,8 @@ test-ui:
     - docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
     # Some more hacky stuff to populate the variables across.
-    - export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
-    - export CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG}
+    # - export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
+    # - export CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG}
     # This is a little hack since you can't mount the exact folder that is already mounted, so you go one deeper.
     - mkdir -p ${SHARED_PATH} && cp -R . ${SHARED_PATH} && cd ${SHARED_PATH}
     - docker-compose up --timeout 1 --no-build -d
