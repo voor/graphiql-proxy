@@ -71,8 +71,7 @@ test-ui:
     - docker:dind
   artifacts:
     reports:
-      # Path is relative to end of job, since we cd there's no need to denote the shared folder
-      junit: ./testOutput/e2e-junit.xml
+      junit: "**/*-junit.xml"
   dependencies:
     - package
   script:
