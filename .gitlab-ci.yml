@@ -84,7 +84,5 @@ test-ui:
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
     # This is a little hack since you can't mount the exact folder that is already mounted, so you go one deeper.
     - mkdir -p ${SHARED_PATH} && cp -R . ${SHARED_PATH} && cd ${SHARED_PATH}
-    # - docker-compose rm -f
-    # - docker-compose up --timeout 1 --no-build -d
-    # - docker-compose run tests ./scripts/start-e2e.sh
-    - ./scripts/run-e2e.sh
+    - docker-compose up --timeout 1 --no-build -d
+    - docker-compose run tests ./scripts/start-e2e.sh
