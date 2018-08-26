@@ -27,8 +27,6 @@ build:
     name: '$CI_COMMIT_REF_NAME'
     paths:
       - build/
-  only:
-    - branches
 
 test:
   image: node:8
@@ -43,8 +41,6 @@ test:
   artifacts:
     reports:
       junit: junit.xml
-  only:
-    - branches
 
 package:
   image: docker:latest
@@ -58,16 +54,14 @@ package:
     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
   dependencies:
     - build
-  only:
-    - branches
 
 test-ui:
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://docker:2375
-  image: 
+  image:
     name: docker/compose:1.22.0
-    entrypoint: ["/bin/sh", "-c"]
+    entrypoint: ['/bin/sh', '-c']
   stage: test-ui
   cache:
     key: '$CI_COMMIT_REF_SLUG'
@@ -86,14 +80,11 @@ test-ui:
   #   - chmod +x /usr/local/bin/docker-compose
   #   - pip install docker-compose
   script:
-    - docker version
-    - docker-compose version
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
-    - mkdir -p ${SHARED_PATH}
-    - cp -R . ${SHARED_PATH}
-    - cd ${SHARED_PATH}
-    - docker-compose rm -f
-    - docker-compose up --timeout 1 --no-build -d
+    # This is a little hack since you can't mount the exact folder that is already mounted, so you go one deeper.
+    - mkdir -p ${SHARED_PATH} && cp -R . ${SHARED_PATH} && cd ${SHARED_PATH}
+    # - docker-compose rm -f
+    # - docker-compose up --timeout 1 --no-build -d
+    # - docker-compose run tests ./scripts/start-e2e.sh
     - ./scripts/run-e2e.sh
-  only:
-    - branches
