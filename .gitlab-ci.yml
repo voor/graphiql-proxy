@@ -8,6 +8,7 @@ stages:
   - test
   - package
   - test-ui
+  - deploy
 
 # Run the build first, to make sure that all minification and uglification properly executes.
 build:
@@ -36,6 +37,8 @@ test:
     paths:
       - node_modules
   artifacts:
+    paths:
+      - coverage/lcov-report/
     reports:
       junit: junit.xml
   coverage: '/^All files\s+\|\s+\d+\.*\d*\s+\|\s*(\d+\.*\d*)/'
@@ -83,3 +86,16 @@ test-ui:
     - mkdir -p ${SHARED_PATH} && cp -R . ${SHARED_PATH} && cd ${SHARED_PATH}
     - docker-compose up --timeout 1 --no-build -d
     - docker-compose run tests ./scripts/start-e2e.sh
+
+pages:
+  stage: deploy
+  dependencies:
+    - test
+  script:
+    - mv coverage/lcov-report/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
