@@ -78,7 +78,6 @@ test-ui:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
     - echo "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
-    - docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" ui
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
     # Some more hacky stuff to populate the variables across.
     - export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
@@ -87,3 +86,5 @@ test-ui:
     - mkdir -p ${SHARED_PATH} && cp -R . ${SHARED_PATH} && cd ${SHARED_PATH}
     - docker-compose up --timeout 1 --no-build -d
     - docker-compose run tests ./scripts/start-e2e.sh
+    - ls -la ${CI_PROJECT_DIR}
+    - ls -la ${SHARED_PATH}
