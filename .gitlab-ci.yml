@@ -92,7 +92,9 @@ pages:
   dependencies:
     - test
   script:
-    - mv coverage/lcov-report/ public/
+    - mv public/ .public/
+    - mkdir public/
+    - mv coverage/lcov-report/ public/ || true
   artifacts:
     paths:
       - public
