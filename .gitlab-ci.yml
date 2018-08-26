@@ -38,7 +38,7 @@ test:
   artifacts:
     reports:
       junit: junit.xml
-  coverage: ^All files\s*\|\s*\d+\.*\d+\s*\|\s*(\d+\.*\d+)
+  coverage: '/^All files\s+\|\s+\d+\.*\d*\s+\|\s*(\d+\.*\d*)/'
 
 package:
   image: docker:latest
