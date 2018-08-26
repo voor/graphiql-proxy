@@ -74,16 +74,15 @@ test-ui:
       junit: ./shared/testOutput/e2e-junit.xml
   dependencies:
     - package
-  # before_script:
-  #   - apk --no-cache add python python-dev py-pip build-base curl bash git
-  #   - curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-  #   - chmod +x /usr/local/bin/docker-compose
-  #   - pip install docker-compose
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+    - echo "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
     - docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" ui
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
+    # Some more hacky stuff to populate the variables across.
+    - export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
+    - export CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG}
     # This is a little hack since you can't mount the exact folder that is already mounted, so you go one deeper.
     - mkdir -p ${SHARED_PATH} && cp -R . ${SHARED_PATH} && cd ${SHARED_PATH}
     - docker-compose up --timeout 1 --no-build -d
