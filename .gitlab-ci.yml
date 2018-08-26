@@ -1,6 +1,8 @@
 # .gitlab-ci.yml
 # Author: Robert Van Voorhees <robert_van_voorhees@troweprice.com>
-# Description: This is a basic GitLab Runner CI file for building and testing a basic Create React App frontend.
+# Description: This is a GitLab Runner CI file for building and testing a Create React App frontend.
+# For testing this locally, there's a ./scripts/run-e2e.sh file.
+# You'll also need to incorporate the server folder or identify an alternative static hosting source.
 variables:
   CI: 'true'
 
@@ -9,8 +11,6 @@ stages:
   - test
   - package
   - test-ui
-  - sonar
-  - deploy
 
 # Run the build first, to make sure that all minification and uglification properly executes.
 build:
@@ -71,13 +71,13 @@ test-ui:
     - docker:dind
   artifacts:
     reports:
-      junit: ./shared/testOutput/e2e-junit.xml
+      # Path is relative to end of job, since we cd there's no need to denote the shared folder
+      junit: ./testOutput/e2e-junit.xml
   dependencies:
     - package
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
-    - echo "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
     # Some more hacky stuff to populate the variables across.
     - export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}
@@ -86,5 +86,3 @@ test-ui:
     - mkdir -p ${SHARED_PATH} && cp -R . ${SHARED_PATH} && cd ${SHARED_PATH}
     - docker-compose up --timeout 1 --no-build -d
     - docker-compose run tests ./scripts/start-e2e.sh
-    - ls -la ${CI_PROJECT_DIR}
-    - ls -la ${SHARED_PATH}
