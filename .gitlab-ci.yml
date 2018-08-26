@@ -81,6 +81,8 @@ test-ui:
   #   - pip install docker-compose
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+    - docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" ui
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
     # This is a little hack since you can't mount the exact folder that is already mounted, so you go one deeper.
     - mkdir -p ${SHARED_PATH} && cp -R . ${SHARED_PATH} && cd ${SHARED_PATH}
