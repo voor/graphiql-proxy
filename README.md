@@ -9,10 +9,18 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 If you don't need to make any modifications to the UI, you can just run this:
 
 ```
-npm install && npm run build && npm run start:faker
+npm install && npm run build && npm run server
 ```
 
 This will run a Create React App production optimized build and then start a backend Express server that will host the assets and proxy `/graphql` to whatever is defined as `${PROXY_HOST}` from the environment.  Hard-coded into the `package.json` right now is just https://api.graph.cool/simple/v1/swapi but you can change that to whatever endpoint you want.
+
+### Quick Start in Dev Mode
+
+If you do want to play around with the UI, then you can alternatively use the Create React App proxy capability to "flip" the server and UI (use a Webpack dev server that proxies to the server instead of vice-versa), you would do that by starting the server independently:
+
+```
+npm start
+```
 
 ## Deploying to a static bucket
 

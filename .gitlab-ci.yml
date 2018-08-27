@@ -16,6 +16,7 @@ build:
   stage: build
   script:
     - npm install
+    - npm audit || true
     - CI='' npm run build # CI variable is blanked out due to stupid dependency WARNING that CRA treats as an error in CI
   cache:
     key: '$CI_COMMIT_REF_SLUG'
