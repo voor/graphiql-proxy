@@ -1,5 +1,7 @@
 # Simple GraphIQL Proxy
 
+[![Code Coverage](https://gitlab.com/rcvanvo/graphiql-proxy/badges/master/coverage.svg?job=test)](https://rcvanvo.gitlab.io/graphiql-proxy/lcov-report/)
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 ## Quick Start
